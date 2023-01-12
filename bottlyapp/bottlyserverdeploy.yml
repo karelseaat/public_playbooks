@@ -1,0 +1,104 @@
+- name: Configure webserver with nginx
+  hosts: webservers
+  become: True
+  tasks:
+
+    - name: Checkout a github repo and use refspec to fetch all pull requests
+      become: yes
+      become_user: karelseaat
+      ansible.builtin.git:
+        repo: git@github.com:MapReducer/bottly_server.git
+        dest: /home/karelseaat/bottly_server
+        update: yes
+        force: yes
+
+    - name: add bottly server to ngnix config
+      template:
+        src: bottly_ngnix_site.conf
+        dest: "/etc/nginx/sites-available/bottly_server_sixdots"
+
+    - name: Create symbolic link to sites-enabled
+      file:
+        src: "/etc/nginx/sites-available/bottly_server_sixdots"
+        dest: "/etc/nginx/sites-enabled/bottly_server_sixdots"
+        state: link
+
+    - name: copy files to generate bottly service
+      template:
+        src: bottly.service
+        dest: "/etc/systemd/system/bottly.service"
+
+    - name: copy the server ini file
+      template:
+        src: bottly_server.ini
+        dest: "/home/karelseaat/bottly_server"
+
+    - name: renew certbot certs
+      ansible.builtin.shell: certbot -n --nginx -d api.six-dots.app
+
+    - name: enable bottly service
+      ansible.builtin.systemd:
+        name: bottly
+        enabled: yes
+
+    - pip:
+        name:    flask
+        version: 1.1.2
+    - pip:
+        name:    flask-jwt-extended
+        version: 3.25.0
+    - pip:
+        name:    sqlalchemy
+        version: 1.3.22
+    - pip:
+        name:    google-auth
+        version: 1.24.0
+    - pip:
+        name:    mysql-connector-python
+        version: 8.0.23
+    - pip:
+        name:    pyjwt
+        version: 1.7.1
+    - pip:
+        name:    pymysql
+        version: 1.0.2
+    - pip:
+        name:    requests
+        version: 2.25.1
+    - pip:
+        name:    sqlalchemy-utils
+        version: 0.36.8
+    - pip:
+        name:    urllib3
+        version: 1.26.2
+    - pip:
+        name:    passlib
+        version: 1.7.4
+    - pip:
+        name:    flask-jwt-extended
+        version: 3.25.0
+    - pip:
+        name:    dnslib
+        version: 0.9.14
+    - pip:
+        name:    uwsgi
+        version: 2.0.19
+    - pip:
+        name:    cerberus
+        version: 1.3.2
+    - pip:
+        name:    psutil
+        version: 5.8.0
+
+    - cron:
+        name: bottly_cleanup
+        minute: "1"
+        user: root
+        cron_file: ./bottly_cleaner
+        job: "/home/karelseaat/bottly_server/cronrunner.py"
+
+    - name: restart nginx
+      service: name=nginx state=restarted
+
+    - name: restart bottly
+      service: name=bottly state=restarted

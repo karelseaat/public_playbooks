@@ -1,0 +1,15 @@
+- name: clear apprank db
+  hosts: all
+  tasks:
+
+    - name: get pipenv loc
+      become: false
+      command: pipenv --venv
+      register: virtloc
+      args:
+        chdir: "{{ foldername }}"
+
+    - name: clear the db
+      command: "{{ virtloc['stdout'] }}/bin/python {{ foldername }}/tools/cleardb.py"
+      args:
+        chdir: "{{ foldername }}/tools"

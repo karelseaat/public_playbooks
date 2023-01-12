@@ -1,0 +1,14 @@
+[Unit]
+Description=Batterylow
+
+[Service]
+ExecStart={{pathtoscript}}/{{pollerscript}}
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=batterylow
+TimeoutStartSec=0
+RestartSec=10
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

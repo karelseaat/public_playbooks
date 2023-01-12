@@ -1,0 +1,18 @@
+- name: restore the db here
+  hosts: all
+  remote_user: "{{ user }}"
+  become: False
+  tasks:
+
+    - name: Copy file with owner and permissions
+      ansible.builtin.copy:
+        src: ../backups/searchrank.sqlite
+        dest: "{{ foldername }}/searchrank.sqlite"
+
+    - name: restart trade_site
+      become: false
+      service: name=apprank state=restarted
+
+    - name: restart nginx
+      become: false
+      service: name=nginx state=restarted

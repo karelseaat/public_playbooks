@@ -1,0 +1,60 @@
+- name: Configure mkdocs-apps with nginx
+  hosts: all
+  remote_user: "{{ user }}"
+  become: True
+  tasks:
+
+    - name: install git
+      apt: name=git state=latest
+
+    - name: install the pips
+      apt: name=python3-pip state=latest
+
+    - name: ensure nginx is at the latest version
+      apt: name=nginx state=latest
+
+    - name:  acl install a tool that is needed
+      apt: name=acl state=latest
+
+    - pip:
+        name: mkdocs
+
+    - pip:
+        name: mkdocs-bootswatch
+
+    - name: Checkout a github repo and use refspec to fetch all pull requests
+      become: yes
+      become_user: "{{ user }}"
+      become_method: sudo
+      ansible.builtin.git:
+        repo: git@github.com:karelseaat/mkdocs_apps.git
+        dest: "{{ foldername }}"
+        update: yes
+        force: yes
+
+    - name: build mkdocs
+      ansible.builtin.shell: mkdocs build
+      become: yes
+      become_user: "{{ user }}"
+      args:
+        chdir: "{{ foldername }}"
+
+    - name: add sixdots website to ngnix config
+      template:
+        src: "{{ secondaryname }}.conf"
+        dest: "/etc/nginx/sites-available/{{ sitename }}"
+
+    - name: Create symbolic link to sites-enabled
+      file:
+        src: "/etc/nginx/sites-available/{{ sitename }}"
+        dest: "/etc/nginx/sites-enabled/{{ sitename }}"
+        state: link
+
+    - name: copy the .htpassw file
+      template:
+        src: .htpasswd
+        dest: "{{ foldername }}/site/.htpasswd"
+
+
+    - name: restart nginx
+      service: name=nginx state=restarted
