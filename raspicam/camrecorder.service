@@ -1,0 +1,12 @@
+[Unit]
+Description=Cam Recorder
+
+[Service]
+ExecStart={{pathtoscript}}/{{recorderscript}}
+SyslogIdentifier=camrecorder
+TimeoutStartSec=2
+Restart=on-failure
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target

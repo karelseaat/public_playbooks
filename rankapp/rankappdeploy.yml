@@ -1,0 +1,115 @@
+- name: Configure apprank with nginx
+  hosts: all
+  remote_user: "{{ user }}"
+  become: True
+  tasks:
+
+    - name: Update
+      apt: update_cache=yes
+
+    - name: install git
+      apt: name=git state=latest
+
+    - name: ensure nginx is at the latest version
+      apt: name=nginx state=latest
+
+    - name:  acl install a tool that is needed
+      apt: name=acl state=latest
+
+    - name: install the pips
+      apt: name=python3-pip state=latest
+
+    - name: install firefox
+      apt: name=firefox state=latest
+
+
+    - name: Checkout a github repo and use refspec to fetch all pull requests
+      become: yes
+      become_user: "{{ user }}"
+      become_method: sudo
+      ansible.builtin.git:
+        repo: git@github.com:karelseaat/apprank.git
+        version: alembictest
+        dest: "{{ foldername }}"
+        update: yes
+        force: yes
+
+
+    - name: get pipenv loc
+      become: false
+      command: pipenv --venv
+      register: virtloc
+      args:
+        chdir: "{{ foldername }}"
+
+    - name: pipenv install packages
+      ansible.builtin.shell: "pipenv install"
+      args:
+        chdir: "{{ foldername }}"
+
+
+    - name: add apprank website to ngnix config
+      template:
+        src: "{{ secondaryname }}.conf"
+        dest: "/etc/nginx/sites-available/apprank"
+
+    - name: Create symbolic link to sites-enabled
+      file:
+        src: "/etc/nginx/sites-available/apprank"
+        dest: "/etc/nginx/sites-enabled/apprank"
+        state: link
+
+    - name: copy files to generate sixdots website service
+      template:
+        src: apprank.service
+        dest: "/etc/systemd/system/apprank.service"
+
+    - name: copy the server ini file
+      template:
+        src: apprank.ini
+        dest: "{{ foldername }}/{{ secondaryname }}.ini"
+
+    - name: enable apprank service
+      ansible.builtin.systemd:
+        name: apprank
+        daemon_reload: yes
+        enabled: yes
+
+    - pip:
+        name: uwsgi
+        version: 2.0.19.1
+
+    - name: create a logging directory
+      become: false
+      file:
+        path: "{{ foldername }}/logs"
+        state: directory
+
+    - name: alembic update to head
+      ansible.builtin.shell: alembic upgrade head
+      args:
+        chdir: "{{ foldername }}"
+
+    - cron:
+        name: get reviews
+        hour: "1"
+        minute: "1"
+        weekday: "4"
+        user: root
+        cron_file: ./seleniumsearchfind
+        job: "{{ virtloc['stdout'] }}/bin/python {{ foldername }}/cronscripts/seleniumsearchfind.py"
+
+    - cron:
+        name: more app info
+        hour: "6"
+        minute: "1"
+        weekday: "4"
+        user: root
+        cron_file: ./fillapps
+        job: "{{ virtloc['stdout'] }}/bin/python {{ foldername }}/cronscripts/fillapps.py"
+
+    - name: restart apprank
+      service: name=apprank state=restarted
+
+    - name: restart nginx
+      service: name=nginx state=restarted

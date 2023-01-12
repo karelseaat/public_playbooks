@@ -1,0 +1,38 @@
+- name: Remove the rankapp server
+  hosts: all
+  remote_user: "{{ user }}"
+  become: True
+  tasks:
+
+    - name: restart rankapp site
+      service: name=apprank state=stopped
+
+    - name: Remove repo directory
+      file:
+        path: "{{ foldername }}"
+        state: absent
+
+    - name: Remove ngnix config files
+      file:
+        path: /etc/nginx/sites-available/rankapp
+        state: absent
+
+    - name: Remove ngnix config files link
+      file:
+        path: /etc/nginx/sites-enabled/rankapp
+        state: absent
+
+    - name: Remove ngnix config files link
+      file:
+        path: "/etc/systemd/system/rankapp.service"
+        state: absent
+
+    - cron:
+        name: check reviews
+        state: absent
+        user: root
+        cron_file: ./seleniumsearchfind
+        job: "/usr/bin/python3 {{ foldername }}/seleniumsearchfind.py"
+
+    - name: restart nginx
+      service: name=nginx state=restarted

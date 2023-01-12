@@ -1,0 +1,11 @@
+- name: backup the db here
+  hosts: all
+  remote_user: "{{ user }}"
+  become: True
+  tasks:
+
+    - name: ansible copy file from remote to local.
+      fetch:
+        src: "{{ foldername }}/searchrank.sqlite"
+        dest: ../backups/
+        flat: true

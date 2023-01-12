@@ -1,0 +1,22 @@
+- name: Do some tests
+  hosts: localhost
+  become: True
+  tasks:
+
+    - cron:
+        name: testcron
+        minute: "0"
+        hour: "1"
+        user: root
+        cron_file: ./blaat
+        job: "echo 'haai'"
+
+    - name: copy requirements
+      template:
+        src: ./requirements.txt
+        dest: /root/requirements.txt
+
+    - name: Install specified python requirements
+      pip:
+        requirements: /root/requirements.txt
+        executable: pip3

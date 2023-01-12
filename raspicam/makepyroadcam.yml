@@ -1,0 +1,107 @@
+- name: Convert py into road cam
+  hosts: all
+  remote_user: "pi"
+  become: True
+  tasks:
+
+    - name: Update
+      apt: update_cache=yes
+
+    - name: Upgrade all apt packages
+      apt: upgrade=dist force_apt_get=yes
+
+    - name: install git
+      apt: name=git state=latest
+
+    - name: install the pips
+      apt: name=python3-pip state=latest
+
+    - name: disable bluetooth
+      lineinfile:
+        path: "/boot/config.txt"
+        regexp: "dtoverlay=disable-bt"
+        line:  "dtoverlay=disable-bt"
+        state: present
+
+    - name: disable some more
+      lineinfile:
+        path: "/boot/config.txt"
+        regexp: "dtoverlay=vc4-fkms-v3d"
+        line:  "dtoverlay=vc4-fkms-v3d"
+        state: absent
+
+# there is still someting wrong with enabling cam this way
+    # - name: Enable the camera via raspi-config
+    #   become: yes
+    #   command: raspi-config nonint do_camera 0
+
+    - name: update the firmware
+      ansible.builtin.shell: "SKIP_WARNING=1 rpi-update"
+
+
+    - name: install pycamera
+      become: True
+      pip:
+        name: picamera
+
+    - name: install psutil
+      become: True
+      pip:
+        name: psutil
+
+    - name: install pyserial
+      become: True
+      pip:
+        name: pyserial
+
+    - name: install pynmea2
+      pip:
+        name: pynmea2
+
+    - name: Checkout a github repo and use refspec to fetch all pull requests
+      become: no
+      become_method: sudo
+      ansible.builtin.git:
+        accept_hostkey: yes
+        repo: git@bitbucket.org:akarelse/pi-cam.git
+        dest: "{{pathtoscript}}"
+        update: yes
+        force: yes
+        version: master
+
+    - name: copy files to the battery low shutdown service
+      template:
+        src: batterylow.service
+        dest: "/etc/systemd/system/batterylow.service"
+
+    - name: enable batterylow service
+      ansible.builtin.systemd:
+        name: batterylow
+        daemon_reload: yes
+        enabled: yes
+
+    - name: restart batterylow
+      service: name=batterylow state=started
+
+    - name: disable serial console
+      service: name=serial-getty@ttyAMA0 state=stopped enabled=no
+
+    - name: disable bluetooth related1
+      service: name=hciuart state=stopped enabled=no
+
+    - name: disable bluetooth related3
+      service: name=bluetooth state=stopped enabled=no
+
+    - name: copy files to camrecorder service
+      template:
+        src: camrecorder.service
+        dest: "/etc/systemd/system/camrecorder.service"
+
+    - name: enable camrecorder service
+      ansible.builtin.systemd:
+        name: camrecorder
+        daemon_reload: yes
+        enabled: no
+
+    - name: restart camrecorder
+      service: name=camrecorder state=stopped
