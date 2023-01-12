@@ -16,4 +16,4 @@ So every dev could have more ratings.
 
 # 4 raspicam
 
-A playbook to set up a pi so that it could record street scenery, for later use in a nural net traning.
+A playbook to set up a pi so that it could record street scenery, for later use in a nural net traning. (also recording GPS for sure)
