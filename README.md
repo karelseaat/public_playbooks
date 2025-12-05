@@ -1,47 +1,17 @@
- Title: Multi-purpose Automation Scripts and Configurations for Various Devices
+ Title: Multi-Platform Web Hosting Automation Scripts
 
-This repository contains a collection of Ansible playbooks and scripts for automating various tasks on different devices. The following devices are supported:
+This repository contains a collection of Ansible playbooks designed to automate the process of setting up virtual web hosting on various platforms, including Raspberry Pi and Ubuntu servers. Each playbook focuses on a specific project but shares a common structure for easy maintenance and scalability.
 
-1. Trade Server (Raspberry Pi): Contains scripts and configurations for enabling the camera, managing battery levels, and creating a road cam for traffic monitoring.
+The main projects are:
 
-2. Rank App Server (Generic Linux): Includes scripts and configurations for setting up a virtual web host, managing databases, and scheduling review checks using Selenium.
+1. `apprank`: A script for deploying a web application designed to monitor and analyze mobile app data. This project includes Ansible playbooks for setting up the virtual web host, managing the database, automating backup/restore processes, and enabling/disabling services as needed.
 
-Please find below detailed explanations of each directory:
+2. `pi-cam`: A Raspberry Pi-based script that automates the process of converting Python scripts into a road camera application. This project includes Ansible playbooks for updating the system, installing dependencies, cloning the Git repository, configuring the camera, managing low battery shutdown, and more.
 
-**batterylow:** Contains the Ansible playbook to convert Python scripts into road cams on Raspberry Pi devices. This script also disables unnecessary services, updates the firmware, and installs required packages.
+Each project includes a main Ansible playbook (e.g., `apprank.yml` or `makepyroadcam.yml`) that outlines the tasks needed to set up the environment. Additional supporting files, such as Ansible roles and templates, are also included in each project directory.
 
-**camrecorder.service:** Service file for managing the video recording process on a Raspberry Pi camera.
+To use these scripts, you will need to have Ansible installed on your machine and follow the instructions provided in the README file within each project folder. It is essential to understand that these playbooks are tailored for specific environments and configurations, so it's crucial to review and customize them according to your needs before running them.
 
-**cleardb.py:** Python script to clear a SQLite database by removing the existing file.
+Please note that some parts of the scripts may still require further refinement to ensure smooth execution on all targeted platforms. As with any Ansible project, testing is essential to validate its functionality and minimize potential issues during deployment.
 
-**makepyroadcam.yml:** Ansible playbook for configuring and setting up the road cam application on Raspberry Pi devices.
-
-**readme.md:** Detailed instructions on how to utilize the pi-cam scripts and configurations for traffic monitoring using a Raspberry Pi camera.
-
-**batterylow.service:** Service file for shutting down the system when battery levels are critically low on Raspberry Pi devices.
-
-**rankapp:** Contains various playbooks, services, and scripts for managing the Rank App server, including setting up virtual web hosts, scheduling review checks using Selenium, clearing databases, and removing the app server completely.
-
-**raspicam:** Directory containing Ansible playbooks and scripts specific to Raspberry Pi devices, such as enabling the camera, managing battery levels, and creating a road cam for traffic monitoring.
-
-**realwebhost.ini:** Ini configuration file for setting up virtual web hosts on various devices.
-
-**raspberrypi-batterylow.service:** Service file for shutting down Raspberry Pi devices when battery levels are critically low.
-
-**rankappremove.yml:** Ansible playbook for completely removing the Rank App server from a system.
-
-**virtualwebhost.ini:** Ini configuration file for setting up virtual web hosts on various devices.
-
-**seleniumsearchfind:** A script that schedules review checks using Selenium on the Rank App server.
-
-**raspicam-makepyroadcam.yml:** Ansible playbook for configuring and setting up the road cam application on Raspberry Pi devices.
-
-**bottlyapp:** Contains scripts and configurations for setting up a virtual web host, managing databases, and scheduling review checks using Selenium on the Trade Server.
-
-**bottly_server.ini:** Ini configuration file for setting up the WSGI server on the Trade Server.
-
-**camrecorder.service:** Service file for managing the video recording process on the Trade Server.
-
-**cleardb.py:** Python script to clear a SQLite database by removing the existing file on the Trade Server.
-
-**readme.md:** Detailed instructions on how to utilize the scripts and configurations provided in this repository, including setting up the Trade Server and managing databases.
+We hope these scripts prove useful in simplifying the process of setting up virtual web hosts on various platforms, saving time and effort for developers like you. Happy automating!
