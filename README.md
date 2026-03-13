@@ -1,17 +1,42 @@
- Title: Multi-Platform Web Hosting Automation Scripts
+# Multi-Platform Web Hosting Automation Scripts
 
-This repository contains a collection of Ansible playbooks designed to automate the process of setting up virtual web hosting on various platforms, including Raspberry Pi and Ubuntu servers. Each playbook focuses on a specific project but shares a common structure for easy maintenance and scalability.
+This repo holds Ansible playbooks for setting up virtual web hosting on different systems—particularly Raspberry Pi and Ubuntu servers. Each playbook is tied to a specific project, but they follow a shared structure to keep things maintainable.
 
-The main projects are:
+## Projects
 
-1. `apprank`: A script for deploying a web application designed to monitor and analyze mobile app data. This project includes Ansible playbooks for setting up the virtual web host, managing the database, automating backup/restore processes, and enabling/disabling services as needed.
+### `apprank`
+Deploys a web app for monitoring and analyzing mobile app data.  
+Includes playbooks for:
 
-2. `pi-cam`: A Raspberry Pi-based script that automates the process of converting Python scripts into a road camera application. This project includes Ansible playbooks for updating the system, installing dependencies, cloning the Git repository, configuring the camera, managing low battery shutdown, and more.
+- Setting up the virtual host  
+- Database configuration  
+- Backup/restore automation  
+- Enabling/disabling services  
 
-Each project includes a main Ansible playbook (e.g., `apprank.yml` or `makepyroadcam.yml`) that outlines the tasks needed to set up the environment. Additional supporting files, such as Ansible roles and templates, are also included in each project directory.
+**Main playbook:** `apprank.yml`  
 
-To use these scripts, you will need to have Ansible installed on your machine and follow the instructions provided in the README file within each project folder. It is essential to understand that these playbooks are tailored for specific environments and configurations, so it's crucial to review and customize them according to your needs before running them.
+### `pi-cam`
+Turns a Raspberry Pi into a road camera using existing Python scripts.  
+Includes playbooks for:
 
-Please note that some parts of the scripts may still require further refinement to ensure smooth execution on all targeted platforms. As with any Ansible project, testing is essential to validate its functionality and minimize potential issues during deployment.
+- System updates and dependency installation  
+- Cloning the project repo  
+- Camera configuration  
+- Low-battery shutdown handling  
 
-We hope these scripts prove useful in simplifying the process of setting up virtual web hosts on various platforms, saving time and effort for developers like you. Happy automating!
+**Main playbook:** `makepyroadcam.yml`  
+
+## How to use
+
+1. Install Ansible on your machine.  
+2. Open the project’s folder (e.g., `apprank/` or `pi-cam/`) and follow its `README.md`.  
+
+These playbooks are opinionated and assume certain defaults. Review and adjust configuration files (variables, paths, user settings, etc.) before running—especially if your environment differs.
+
+## Notes
+
+- Some playbooks may need tweaks depending on your exact setup or OS version.  
+- Always test on a non-production system first.  
+
+—  
+Use these as a starting point to streamline your own deployments.
