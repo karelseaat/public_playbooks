@@ -40,3 +40,7 @@ These playbooks are opinionated and assume certain defaults. Review and adjust c
 
 —  
 Use these as a starting point to streamline your own deployments.
+
+## More from Karelseaat
+
+For more projects and experiments, visit my GitHub Pages site: [karelseaat.github.io](https://karelseaat.github.io/)
