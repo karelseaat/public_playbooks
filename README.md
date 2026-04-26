@@ -44,3 +44,15 @@ Use these as a starting point to streamline your own deployments.
 ## More from Karelseaat
 
 For more projects and experiments, visit my GitHub Pages site: [karelseaat.github.io](https://karelseaat.github.io/)
+
+<!-- KEEP-EXPLORING-START -->
+## Keep Exploring
+
+If you made it to the bottom, jump straight into a few related repos:
+
+- [Sitechecker](https://github.com/karelseaat/sitechecker)
+- [Madproxy](https://github.com/karelseaat/madproxy)
+- [Service Discover](https://github.com/karelseaat/service_discover)
+
+- [Full project index](https://karelseaat.github.io/)
+<!-- KEEP-EXPLORING-END -->
